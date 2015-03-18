@@ -1,13 +1,19 @@
-# This is a template for a Ruby scraper on Morph (https://morph.io)
-# including some code snippets below that you should find helpful
+#require 'scraperwiki'
+require 'mechanize'
 
-# require 'scraperwiki'
-# require 'mechanize'
-#
-# agent = Mechanize.new
-#
-# # Read in a page
-# page = agent.get("http://foo.com")
+agent = Mechanize.new
+
+page = agent.get("http://www.dtpli.vic.gov.au/local-government/find-your-local-council")
+
+urls = page.at("#councils").parent.search("a").map {|a| a["href"]}
+# Ignore the last link because it's for contact details
+if urls[-1] == "http://www.dtpli.vic.gov.au/local-government/local-government-contact-details"
+  urls = urls[0..-2]
+else
+  raise "Unexpected form of last link"
+end
+p urls
+
 #
 # # Find somehing on the page using css selectors
 # p page.at('div.content')
