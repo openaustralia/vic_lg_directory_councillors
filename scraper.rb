@@ -1,6 +1,23 @@
 #require 'scraperwiki'
 require 'mechanize'
 
+def scrape_council(url)
+  agent = Mechanize.new
+  page = agent.get(url)
+  council = page.at("h1").inner_text
+  h = page.search("h2").find{|h| h.inner_text == "Councillors"}
+  block = h.next_element.inner_html.split("<br>")
+  block[1..-1].each do |line|
+    record = {
+      "council" => council,
+      "ward" => line.split("-")[0].strip,
+      "councillor" => line.split("-")[1..-1].join("-").strip
+    }
+    p record
+    #ScraperWiki.save_sqlite(["council", "councillor"], record)
+  end
+end
+
 agent = Mechanize.new
 
 page = agent.get("http://www.dtpli.vic.gov.au/local-government/find-your-local-council")
@@ -12,7 +29,9 @@ if urls[-1] == "http://www.dtpli.vic.gov.au/local-government/local-government-co
 else
   raise "Unexpected form of last link"
 end
-p urls
+#p urls
+
+urls.each {|url| scrape_council(url)}
 
 #
 # # Find somehing on the page using css selectors
