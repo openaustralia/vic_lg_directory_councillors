@@ -17,17 +17,17 @@ def scrape_council(url)
   h = page.search("h2").find{|h| h.inner_text == "Councillors"}
   block = h.next_element.inner_html.split("<br>")
   block[1..-1].each do |line|
-    if line.split("-")[0].strip == "Unsubdivided"
+    if line.split(" - ")[0].strip == "Unsubdivided"
       ward = nil
     else
-      ward = line.split("-")[0].strip
+      ward = line.split(" - ")[0].strip
     end
 
-    if line.split("-")[1..-1].join("-").strip =~ /<strong>\(Mayor.*\)<\/strong>/
-      name = simplify_name(line.split("-")[1..-1].join("-").strip.split("<strong>").first.strip)
+    if line.split(" - ")[1..-1].join(" - ").strip =~ /<strong>\(Mayor.*\)<\/strong>/
+      name = simplify_name(line.split(" - ")[1..-1].join(" - ").strip.split("<strong>").first.strip)
       position = "mayor"
     else
-      name = simplify_name(line.split("-")[1..-1].join("-").strip)
+      name = simplify_name(line.split(" - ")[1..-1].join(" - ").strip)
       position = nil
     end
 
