@@ -1,6 +1,15 @@
 #require 'scraperwiki'
 require 'mechanize'
 
+# Remove councillor whatnot
+def simplify_name(text)
+  if text.split(" ").first == "Cr"
+    text.split(" ")[1..-1].join(" ")
+  else
+    text
+  end
+end
+
 def scrape_council(url)
   agent = Mechanize.new
   page = agent.get(url)
@@ -15,10 +24,10 @@ def scrape_council(url)
     end
 
     if line.split("-")[1..-1].join("-").strip =~ /<strong>\(Mayor.*\)<\/strong>/
-      name = line.split("-")[1..-1].join("-").strip.split("<strong>").first.strip
+      name = simplify_name(line.split("-")[1..-1].join("-").strip.split("<strong>").first.strip)
       position = "mayor"
     else
-      name = line.split("-")[1..-1].join("-").strip
+      name = simplify_name(line.split("-")[1..-1].join("-").strip)
       position = nil
     end
 
