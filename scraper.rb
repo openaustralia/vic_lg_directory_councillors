@@ -14,10 +14,19 @@ def scrape_council(url)
       ward = line.split("-")[0].strip
     end
 
+    if line.split("-")[1..-1].join("-").strip =~ /<strong>\(Mayor.*\)<\/strong>/
+      name = line.split("-")[1..-1].join("-").strip.split("<strong>").first.strip
+      position = "mayor"
+    else
+      name = line.split("-")[1..-1].join("-").strip
+      position = nil
+    end
+
     record = {
       "council" => council,
       "ward" => ward,
-      "councillor" => line.split("-")[1..-1].join("-").strip
+      "councillor" => name,
+      "position" => position
     }
     p record
     #ScraperWiki.save_sqlite(["council", "councillor"], record)
