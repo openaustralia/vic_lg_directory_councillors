@@ -14,6 +14,8 @@ def scrape_council(url)
   agent = Mechanize.new
   page = agent.get(url)
   council = page.at("h1").inner_text
+  website_h = page.search("h2").find{|h| h.inner_text == "Website"}
+  website = website_h.next_element.inner_text
   h = page.search("h2").find{|h| h.inner_text == "Councillors"}
   block = h.next_element.inner_html.split("<br>")
   block[1..-1].each do |line|
@@ -35,7 +37,8 @@ def scrape_council(url)
       "council" => council,
       "ward" => ward,
       "councillor" => name,
-      "position" => position
+      "position" => position,
+      "council_website" => website
     }
     p record
     ScraperWiki.save_sqlite(["council", "councillor"], record)
