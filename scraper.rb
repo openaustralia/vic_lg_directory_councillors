@@ -25,7 +25,10 @@ def scrape_council(url)
       ward = line.split(" - ")[0].strip
     end
 
-    if line.split(" - ")[1..-1].join(" - ").strip =~ /<strong>\(Mayor.*\)<\/strong>/
+    if match = line.match(/Leadership Team - (.+) - Cr ([^<\-\(]+)/)
+      position, name = match.captures
+      ward = nil
+    elsif line.split(" - ")[1..-1].join(" - ").strip =~ /<strong>\(Mayor.*\)<\/strong>/
       name = simplify_name(line.split(" - ")[1..-1].join(" - ").strip.split("<strong>").first.strip)
       position = "mayor"
     else
